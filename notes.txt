@@ -1,0 +1,12 @@
+Theme for project:
+General Store
+
+Categories needed:
+Sporting
+Home
+Electronics
+
+models needed:
+    iteminstance: 
+        elements: name, description, category, price, number-in-stock, URL
+    category:
