@@ -20,7 +20,6 @@ models needed:
         elements: 
             item: Item
             status: enum (available or unavailable)
-            number-in-stock: number
             url: String
     category:
         elements:
