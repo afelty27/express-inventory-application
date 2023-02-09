@@ -1,12 +1,28 @@
 Theme for project:
-General Store
+Sporting Goods
 
 Categories needed:
-Sporting
-Home
-Electronics
+Water Sports
+Racquet Sports
+Wilderness Sports
+Running/Field sports
 
 models needed:
+    items:
+        elements:
+            name: String
+            description: String
+            category: Category[0..*]
+            price: number
+            number-in-stock: number
+            url: String
     iteminstance: 
-        elements: name, description, category, price, number-in-stock, URL
+        elements: 
+            item: Item
+            status: enum (available or unavailable)
+            number-in-stock: number
+            url: String
     category:
+        elements:
+            name: String
+            url: String

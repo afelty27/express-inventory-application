@@ -16,7 +16,13 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 //databse string goes here
-//const mongoDB =
+const mongoDB = "mongodb://127.0.0.1/my_database";
+
+//wait for database to connect, log error if there is a problem
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
