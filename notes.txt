@@ -8,7 +8,7 @@ Wilderness Sports
 Running/Field sports
 
 models needed:
-    items:
+    item:
         elements:
             name: String
             description: String
@@ -25,3 +25,12 @@ models needed:
         elements:
             name: String
             url: String
+
+
+Routes needed:
+    catalog/ - index/home page
+    catalog<objects>/ - list of all items, categories (eg /cagalog/items/)
+    catalog<object>/<id> - detail page for a specific item, itemInstance, or category with given _id field (eg /catalog/item/3842342)
+    catalog<object>/<create> - create new item, itemInstance, or catalog
+    catalog/<object>/<id>/update
+    catalog<object>/<id>/delete
