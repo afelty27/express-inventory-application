@@ -17,4 +17,4 @@ ItemInstanceSchema.virtual("url").get(function () {
 });
 
 //Export module
-module.exports = mongoose.model("BookInstance", BookInstanceSchema);
+module.exports = mongoose.model("ItemInstance", ItemInstanceSchema);

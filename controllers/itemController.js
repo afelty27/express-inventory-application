@@ -1,4 +1,4 @@
-const Item = require("../modelss/item");
+const Item = require("../models/item");
 
 exports.index = (req, res) => {
   res.send("NOT IMPELEMENTED: Site Home Page");

@@ -11,7 +11,7 @@ exports.iteminstance_detail = (req, res) => {
 };
 
 //display ItemInstanace create form on GET
-exports.itemInstance_create_get = (req, res) => {
+exports.iteminstance_create_get = (req, res) => {
   res.send("NOT IMPLEMENTED: ItemInstance create GET");
 };
 
