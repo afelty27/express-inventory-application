@@ -1,8 +1,19 @@
 const Category = require("../models/category");
 
 //Dispaly list of all categories
-exports.category_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category List");
+exports.category_list = (req, res, next) => {
+  Category.find()
+    .sort([["name", "ascending"]])
+    .exec(function (err, list_categories) {
+      if (err) {
+        return next(err);
+      }
+      //successful, so render
+      res.render("category_list", {
+        title: "Category List",
+        category_list: list_categories,
+      });
+    });
 };
 
 //dipslay detail page for a specific category

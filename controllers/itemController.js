@@ -1,12 +1,51 @@
 const Item = require("../models/item");
+const Category = require("../models/category");
+const ItemInstance = require("../models/iteminstance");
+
+const async = require("async");
 
 exports.index = (req, res) => {
-  res.send("NOT IMPELEMENTED: Site Home Page");
+  console.log("inside index");
+  async.parallel(
+    {
+      item_count(callback) {
+        console.log("Enter item_count in itemController.js");
+        Item.countDocuments({}, callback);
+      },
+      // item_instance_count(callback) {
+      //   ItemInstance.countDocuments({}, callback);
+      // },
+      // item_instance_available_count(callback) {
+      //   ItemInstance.countDocuments({ status: "Available" }, callback);
+      // },
+      // category_count(callback) {
+      //   Category.countDocuments({}, callback);
+      // },
+    },
+    (err, results) => {
+      console.log("here");
+      res.render("index", {
+        title: "Inventory Application Home",
+        err: err,
+        data: JSON.stringify(results),
+      });
+    }
+  );
 };
 
 //display list of all items
-exports.item_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item list");
+exports.item_list = (req, res, next) => {
+  Item.find({}, "name")
+    .sort({ name: 1 })
+    .populate("")
+    .exec(function (err, list_items) {
+      if (err) {
+        return next(err);
+      }
+      console.log("here");
+      //successful, so render
+      res.render("item_list", { title: "Item List", item_list: list_items });
+    });
 };
 
 //display detail page for a specific item

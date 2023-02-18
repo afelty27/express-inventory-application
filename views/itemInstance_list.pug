@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1= title
+  p here
+  p #{iteminstance_list}
+  
+  ul 
+    each val in iteminstance_list 
+      li
+        a(href=val.url) #{val.item.name}
+        if val.status === "Available"
+          span.text-success #{val.status}
+        if val.status === "Low Stock"
+          span.text-warning #{val.status}
+        if val.status === "Out of Stock"
+          span.text-danger #{val.status}

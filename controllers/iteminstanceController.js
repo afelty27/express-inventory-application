@@ -1,8 +1,22 @@
 const ItemInstance = require("../models/iteminstance");
+const Item = require("../models/item");
+const Category = require("../models/category");
+var async = require("async");
 
 //Display list of all ItemInstances.
 exports.iteminstance_list = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance list");
+  ItemInstance.find({})
+    .populate("item")
+    .sort({ name: 1 })
+    .exec(function (err, list_iteminstance) {
+      if (err) {
+        return next(err);
+      }
+      res.render("itemInstance_list", {
+        title: "All Items",
+        iteminstance_list: list_iteminstance,
+      });
+    });
 };
 
 //Display detail page for a specific ItemInstance

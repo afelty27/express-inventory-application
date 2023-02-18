@@ -79,7 +79,7 @@ function itemInstanceCreate(item, status, cb) {
       return;
     }
     console.log("New ItemInstance: " + iteminstance);
-    iteminstnaces.push(iteminstance);
+    iteminstances.push(iteminstance);
     cb(null, item);
   });
 }
