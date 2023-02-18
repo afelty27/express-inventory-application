@@ -48,7 +48,32 @@ exports.item_list = (req, res, next) => {
 
 //display detail page for a specific item
 exports.item_detail = (req, res) => {
-  res.send(`NOT IMPLEMENED: Item detail: ${req.params.id}`);
+  async.parallel(
+    {
+      item: function (cb) {
+        Item.findById(req.params.id).populate("category").exec(cb);
+      },
+      item_instanace: function (cb) {
+        ItemInstance.find({ item: req.params.id }).exec(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.item === null) {
+        var err = new Error("Item not found");
+        err.status = 404;
+        return next(err);
+      }
+      //Successful so render
+      res.render("item_detail", {
+        title: "Item Detail",
+        item: results.item,
+        item_instance: results.item_instace,
+      });
+    }
+  );
 };
 
 //display item create form on GET
