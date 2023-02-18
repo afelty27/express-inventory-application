@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1= title
+
+  h5 #{category.name}
+
+  p Items: 
+
+  ul 
+    for item in category_items 
+        li 
+            a(href=item.url) #{item.name}, 
+            | $#{item.price}

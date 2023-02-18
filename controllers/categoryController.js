@@ -1,4 +1,7 @@
 const Category = require("../models/category");
+const Item = require("../models/item");
+const async = require("async");
+const ItemInstance = require("../models/iteminstance");
 
 //Dispaly list of all categories
 exports.category_list = (req, res, next) => {
@@ -18,7 +21,33 @@ exports.category_list = (req, res, next) => {
 
 //dipslay detail page for a specific category
 exports.category_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Category detail: ${req.params.id}`);
+  async.parallel(
+    {
+      category: function (cb) {
+        Category.findById(req.params.id).exec(cb);
+      },
+      category_items: function (cb) {
+        Item.find({ category: req.params.id }).exec(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        //No results
+        var err = new Error("Category not Found");
+        err.status = 404;
+        return next(err);
+      }
+      //successful, so render.
+      res.render("category_detail", {
+        title: "Category Detail",
+        category: results.category,
+        category_items: results.category_items,
+      });
+    }
+  );
 };
 
 //dispaly category create form on GET

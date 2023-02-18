@@ -5,7 +5,6 @@ const ItemInstance = require("../models/iteminstance");
 const async = require("async");
 
 exports.index = (req, res) => {
-  console.log("inside index");
   async.parallel(
     {
       item_count(callback) {
