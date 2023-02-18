@@ -6,9 +6,6 @@ block content
 
   h1 Dynamic content 
 
-  p #{data}
-  p hello !{data[item_count]}
-
   if error 
     p Error getting dynamic content 
   else 
@@ -17,5 +14,5 @@ block content
    ul 
     li #[strong Items:] !{data.item_count}
     li #[strong Total Item Instances:]  !{data.item_instance_count}
-    li #[strong Available Items:] 
-    li #[strong Categories:] 
+    li #[strong Available Items:] !{data.item_instance_available_count}
+    li #[strong Categories:] !{data.category_count}

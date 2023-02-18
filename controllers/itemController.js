@@ -9,25 +9,23 @@ exports.index = (req, res) => {
   async.parallel(
     {
       item_count(callback) {
-        console.log("Enter item_count in itemController.js");
         Item.countDocuments({}, callback);
       },
-      // item_instance_count(callback) {
-      //   ItemInstance.countDocuments({}, callback);
-      // },
-      // item_instance_available_count(callback) {
-      //   ItemInstance.countDocuments({ status: "Available" }, callback);
-      // },
-      // category_count(callback) {
-      //   Category.countDocuments({}, callback);
-      // },
+      item_instance_count(callback) {
+        ItemInstance.countDocuments({}, callback);
+      },
+      item_instance_available_count(callback) {
+        ItemInstance.countDocuments({ status: "Available" }, callback);
+      },
+      category_count(callback) {
+        Category.countDocuments({}, callback);
+      },
     },
     (err, results) => {
-      console.log("here");
       res.render("index", {
         title: "Inventory Application Home",
         err: err,
-        data: JSON.stringify(results),
+        data: results,
       });
     }
   );
