@@ -21,7 +21,35 @@ exports.iteminstance_list = (req, res) => {
 
 //Display detail page for a specific ItemInstance
 exports.iteminstance_detail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: ItemInstance detail: ${req.params.id}`);
+  async.parallel(
+    {
+      iteminstance: function (cb) {
+        ItemInstance.findById(req.params.id)
+          .populate({
+            path: "item",
+            populate: {
+              path: "category",
+            },
+          })
+          .exec(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.iteminstance == null) {
+        var err = new Error("Item not Found");
+        err.status = 404;
+        return next(err);
+      }
+      //successful, so render
+      res.render("itemInstance_detail", {
+        title: "ItemInstance Detail",
+        itemInstance: results.iteminstance,
+      });
+    }
+  );
 };
 
 //display ItemInstanace create form on GET

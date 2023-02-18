@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1= title
+
+  p #{itemInstance}
+
+  h3= itemInstance.item.name 
+
+  p Description: #{itemInstance.item.description}
+  p Cost: #{itemInstance.item.price}
+  p Stock: #{itemInstance.item.number_in_stock}
+  p Status: #{itemInstance.status} 
+
+  p Categories:
+  for val in itemInstance.item.category 
+    p #{val.name}
+ 
