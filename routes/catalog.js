@@ -12,7 +12,7 @@ const item_instance_controller = require("../controllers/iteminstanceController"
 router.get("/", item_controller.index);
 
 //GET request for creating an item. NOTE this must cocme before routes that display item (uses id)
-router.get("/item/create", item_controller.item_create_post);
+router.get("/item/create", item_controller.item_create_get);
 
 //POST requrest for creating item
 router.post("/item/create", item_controller.item_create_post);

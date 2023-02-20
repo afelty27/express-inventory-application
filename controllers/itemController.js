@@ -77,7 +77,23 @@ exports.item_detail = (req, res) => {
 
 //display item create form on GET
 exports.item_create_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item create GET");
+  //get all categories to display
+  async.parallel(
+    {
+      categories: function (cb) {
+        Category.find({}).exec(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      res.render("item_form", {
+        title: "Item Create Form",
+        category_list: results.categories,
+      });
+    }
+  );
 };
 
 //handle item create on POST

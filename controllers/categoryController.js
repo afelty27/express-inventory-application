@@ -52,7 +52,7 @@ exports.category_detail = (req, res) => {
 
 //dispaly category create form on GET
 exports.category_create_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category create GET");
+  res.render("category_form", { title: "Category Form" });
 };
 
 //handle category create on POST

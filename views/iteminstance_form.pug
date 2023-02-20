@@ -1,0 +1,21 @@
+extends layout 
+
+block content 
+    h1= title
+
+
+    form(method='POST', action='')
+        .form-group 
+            label(for='item') Item: 
+            select#item.form-control(type='select', placeholder='Select Item', name='item' required=true)
+                for item in item_list 
+                    option(value=item._id, selected=(selected_item==item._id.toString() ? 'selected' : false)) #{item.name}
+
+        .form-group 
+            label(for='status') Status:
+            select#status.form-control(type='select', placeholder='Select status' name='status' required=true)
+                option(value='Available' selected=(undefined===iteminstance || iteminstance.status!='Available' ? false: 'selected')) Available
+                option(value='Low Stock' selected=(undefined===iteminstance || iteminstance.status!='Low Stock' ? false: 'selected')) Low Stock
+                option(value='Out of Stock' selected=(undefined===iteminstance || iteminstance.status!='Out of Stock' ? false: 'selected')) Out of Stock
+        
+        button.btn.btn-primary(type='submit') Submit

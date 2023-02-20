@@ -53,8 +53,19 @@ exports.iteminstance_detail = (req, res) => {
 };
 
 //display ItemInstanace create form on GET
-exports.iteminstance_create_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance create GET");
+exports.iteminstance_create_get = (req, res, next) => {
+  //need to get Item
+
+  Item.find({}, "name").exec(function (err, items) {
+    if (err) {
+      return next(err);
+    }
+    //successful, so render
+    res.render("iteminstance_form", {
+      title: "ItemInstance Create",
+      item_list: items,
+    });
+  });
 };
 
 //handle ItemInstance create on POST
