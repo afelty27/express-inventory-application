@@ -3,6 +3,8 @@ const Item = require("../models/item");
 const async = require("async");
 const ItemInstance = require("../models/iteminstance");
 
+const { body, validationResult } = require("express-validator");
+
 //Dispaly list of all categories
 exports.category_list = (req, res, next) => {
   Category.find()
@@ -56,9 +58,56 @@ exports.category_create_get = (req, res, next) => {
 };
 
 //handle category create on POST
-exports.category_create_post = (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Category create POST");
-};
+exports.category_create_post = [
+  //validate and sanitize the name field
+  body("name", "Category name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  //Process request after validation and sanitization
+  (req, res, next) => {
+    //extract the validation errors from a request
+    const errors = validationResult(req);
+
+    //create a category object with excaped and trimmed data
+    var category = new Category({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      //there are errors. render the form again with sanitized values/error messages
+      res.render("category_form", {
+        title: "Create Category",
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      //data from form is valid
+      //check if same name already exists
+      Category.findOne({ name: req.body.name }).exec(function (
+        err,
+        found_category
+      ) {
+        if (err) {
+          return next(err);
+        }
+
+        if (found_category) {
+          //category exists, redirect to detail page
+          res.redirect(found_category.url);
+        } else {
+          category.save(function (err) {
+            if (err) {
+              return next(err);
+            }
+            //category saved. redirect to category detail age
+            res.redirect(category.url);
+          });
+        }
+      });
+    }
+  },
+];
 
 //display genre delete form on GET
 //FIX? need to get list of ItemInstances not just types

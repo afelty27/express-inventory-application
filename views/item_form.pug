@@ -8,7 +8,7 @@ block content
     form(method="POST" action='')
         div.form-group 
             label(for='name') Item Name: 
-            input#itemName.form-control(type='text', placeholder='Item name here', name='itemName', required='true' value=(undefined===item ? "" : item.name))
+            input#name.form-control(type='text', placeholder='Item name here', name='name', required='true' value=(undefined===item ? "" : item.name))
         div.form-group
             label Category: 
             div     
@@ -18,13 +18,13 @@ block content
                         label(for=category._id) #{category.name}
         div.form-group 
             label(for='description') Description: 
-            input#itemDescription.form-control(type='text', placeholder='Item Description Here', name='itemDescription', required='true' value=(undefined===item ? "" : item.description))
+            input#description.form-control(type='text', placeholder='Item Description Here', name='description', required='true' value=(undefined===item ? "" : item.description))
         .form-group 
             label(for="price") Price: 
-            input#itemPrice.form-control(type='number', placeholder="Enter Price Here", name='itemPrice', required='true' min="0" value=(undefined===item ? 0 : item.name))
+            input#price.form-control(type='number', placeholder="Enter Price Here", name='price', required='true' min="0" value=(undefined===item ? 0 : item.name))
         .form-group 
             label(for="stock") Stock: 
-            input#itemStock.form-control(type='number', placeholder="Enter Stock Quantity", name='stock', required='true' min='0' value=(undefined===item ? 0 : item.number_in_stock))
+            input#stock.form-control(type='number', placeholder="Enter Stock Quantity", name='stock', required='true' min='0' value=(undefined===item ? 0 : item.number_in_stock))
 
         button.btn.btn-primary(type='submit') Submit
 

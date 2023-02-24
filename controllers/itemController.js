@@ -3,6 +3,7 @@ const Category = require("../models/category");
 const ItemInstance = require("../models/iteminstance");
 
 const async = require("async");
+const { body, validationResult } = require("express-validator");
 
 exports.index = (req, res) => {
   async.parallel(
@@ -81,9 +82,8 @@ exports.item_create_get = (req, res) => {
   async.parallel(
     {
       categories: function (cb) {
-        Category.find({}).exec(cb);
+        Category.find(cb);
       },
-      item_list: function (cb) {},
     },
     function (err, results) {
       if (err) {
@@ -92,16 +92,98 @@ exports.item_create_get = (req, res) => {
       res.render("item_form", {
         title: "Item Create Form",
         category_list: results.categories,
-        item_instances: item_list,
       });
     }
   );
 };
 
 //handle item create on POST
-exports.item_create_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item create POST");
-};
+exports.item_create_post = [
+  //convert category to array
+  (req, res, next) => {
+    if (!(req.body.category instanceof Array)) {
+      if (typeof req.body.category === "undefined") req.body.category = [];
+      else req.body.category = new Array(req.body.category);
+    }
+    next();
+  },
+
+  //validate and sanitize fields
+  body("name", "Name must not be empty").trim().isLength({ min: 1 }).escape(),
+  body("description", "Description must not be empty")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("category.*").escape(),
+  body("price", "Item must have a positive price")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("stock", "Stock must have a positive value").escape(),
+
+  //process request after validation and sanitization
+  (req, res, next) => {
+    //Extract validation errors from request
+    const errors = validationResult(req);
+
+    //Creat Item object with excaped and trimmed data
+    var item = new Item({
+      name: req.body.name,
+      description: req.body.description,
+      category: req.body.category,
+      price: req.body.price,
+      number_in_stock: req.body.stock,
+    });
+
+    if (!errors.isEmpty()) {
+      //There are errors, render form again with error messages
+
+      //get all genres for form
+      async.parallel(
+        {
+          categories: function (cb) {
+            Category.find(cb);
+          },
+        },
+        function (err, results) {
+          if (err) {
+            console.log("ERROR OCCURED");
+            return next(err);
+          }
+          console.log("line 152");
+          console.log(results);
+          console.log("length: " + results.categories.length);
+          //mark our selected categories as checked
+          for (let i = 0; i < results.categories.length; i++) {
+            console.log("enter for");
+            if (item.category.indexOf(results.categories[i]._id) > -1) {
+              console.log("enter if");
+              results.categories[i].checked = "true";
+            }
+          }
+          console.log("Here, some error happened");
+          console.log(errors.array());
+          res.render("item_form", {
+            title: "Create Item",
+            category_list: results.categories,
+            item: item,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    } else {
+      //Data from form is valid. Save book
+      item.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+        //successful, redirect to new item record
+        res.redirect(item.url);
+      });
+    }
+  },
+];
 
 //display item delete form on get
 exports.item_delete_get = (req, res, next) => {
