@@ -74,8 +74,23 @@ exports.iteminstance_create_post = (req, res) => {
 };
 
 //display ItemInstance delete form on GET
-exports.iteminstance_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance delte GET");
+exports.iteminstance_delete_get = (req, res, next) => {
+  ItemInstance.findById(req.params.id)
+    .populate("item")
+    .exec(function (err, iteminstance) {
+      if (err) {
+        return next(err);
+      }
+      if (iteminstance == null) {
+        //no results
+        res.redirect("/catalog/iteminstances");
+      }
+      //successful, so render
+      res.render("iteminstance_delete", {
+        title: "Delete ItemInstance",
+        iteminstance: iteminstance,
+      });
+    });
 };
 
 //handle itemInstance delelet on POST
