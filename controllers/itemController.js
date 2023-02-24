@@ -46,7 +46,7 @@ exports.item_list = (req, res, next) => {
 };
 
 //display detail page for a specific item
-exports.item_detail = (req, res) => {
+exports.item_detail = (req, res, next) => {
   async.parallel(
     {
       item: function (cb) {
@@ -83,6 +83,7 @@ exports.item_create_get = (req, res) => {
       categories: function (cb) {
         Category.find({}).exec(cb);
       },
+      item_list: function (cb) {},
     },
     function (err, results) {
       if (err) {
@@ -91,6 +92,7 @@ exports.item_create_get = (req, res) => {
       res.render("item_form", {
         title: "Item Create Form",
         category_list: results.categories,
+        item_instances: item_list,
       });
     }
   );
@@ -102,8 +104,41 @@ exports.item_create_post = (req, res) => {
 };
 
 //display item delete form on get
-exports.item_delete_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item dlelete GET");
+exports.item_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      item: function (cb) {
+        Item.findById(req.params.id).exec(cb);
+      },
+      item_list: function (cb) {
+        var allInstance = ItemInstance.find().populate();
+        allInstance.aggregate([
+          {
+            $project: {
+              item: {
+                $filter: {
+                  input: "",
+                },
+              },
+            },
+          },
+        ]);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      // if (results.items == null) {
+      //   var err = new Error("Item Not Found");
+      //   err.status = 404;
+      //   return next(err);
+      // }
+      res.render("item_delete", {
+        title: "Item Delete Form",
+      });
+    }
+  );
 };
 
 //handle item delete on POST
