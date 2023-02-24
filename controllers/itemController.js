@@ -108,21 +108,11 @@ exports.item_delete_get = (req, res, next) => {
   async.parallel(
     {
       item: function (cb) {
-        Item.findById(req.params.id).exec(cb);
+        Item.findById(req.params.id).populate("category").exec(cb);
       },
+      //populate all iteminstances, then filter by Item id
       item_list: function (cb) {
-        var allInstance = ItemInstance.find().populate();
-        allInstance.aggregate([
-          {
-            $project: {
-              item: {
-                $filter: {
-                  input: "",
-                },
-              },
-            },
-          },
-        ]);
+        ItemInstance.find({ item: req.params.id }).exec(cb);
       },
     },
     function (err, results) {
@@ -136,6 +126,8 @@ exports.item_delete_get = (req, res, next) => {
       // }
       res.render("item_delete", {
         title: "Item Delete Form",
+        item_instances: results.item_list,
+        item: results.item,
       });
     }
   );

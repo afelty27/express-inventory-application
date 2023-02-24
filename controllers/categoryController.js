@@ -20,7 +20,7 @@ exports.category_list = (req, res, next) => {
 };
 
 //dipslay detail page for a specific category
-exports.category_detail = (req, res) => {
+exports.category_detail = (req, res, next) => {
   async.parallel(
     {
       category: function (cb) {
@@ -51,18 +51,54 @@ exports.category_detail = (req, res) => {
 };
 
 //dispaly category create form on GET
-exports.category_create_get = (req, res) => {
+exports.category_create_get = (req, res, next) => {
   res.render("category_form", { title: "Category Form" });
 };
 
 //handle category create on POST
-exports.category_create_post = (req, res) => {
+exports.category_create_post = (req, res, next) => {
   res.send("NOT IMPLEMENTED: Category create POST");
 };
 
 //display genre delete form on GET
-exports.category_delete_get = (req, res) => {
-  res.send("NOT Impelemented: Category delete GET");
+//FIX? need to get list of ItemInstances not just types
+exports.category_delete_get = (req, res, next) => {
+  //get all current categories and item associated with them
+  async.parallel(
+    {
+      category_items: function (cb) {
+        console.log("here");
+        console.log(cb);
+        console.log(req.params);
+        //Item.find({ category: req.params.id }).exec(cb);
+        ItemInstance.find()
+          .populate({
+            path: "item",
+            populate: {
+              path: "category",
+            },
+          })
+          // .find({ "item.category._id": req.params.id })
+          .exec(cb);
+        // .match({ "item.category._id": req.params.id });
+      },
+      category: function (cb) {
+        Category.findById(req.params.id).exec(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      res.render("category_delete", {
+        title: "Category Delete Form",
+        category: results.category,
+        category_items: results.category_items,
+      });
+    }
+  );
+
+  //res.send("NOT Impelemented: Category delete GET");
 };
 
 //handle category delete POST
