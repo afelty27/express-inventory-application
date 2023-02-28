@@ -109,7 +109,7 @@ exports.category_create_post = [
   },
 ];
 
-//display genre delete form on GET
+//display category delete form on GET
 //FIX? need to get list of ItemInstances not just types
 exports.category_delete_get = (req, res, next) => {
   //get all current categories and item associated with them
@@ -146,13 +146,54 @@ exports.category_delete_get = (req, res, next) => {
       });
     }
   );
-
-  //res.send("NOT Impelemented: Category delete GET");
 };
 
 //handle category delete POST
-exports.category_delete_post = (req, res) => {
-  res.send("NOT IMPELEMENTED: Category delete POST");
+//TOFIX - gets all iteminstances, not just ones filtered by category
+exports.category_delete_post = (req, res, next) => {
+  //get category and category item list
+  async.parallel(
+    {
+      category: function (cb) {
+        Category.findById(req.params.id).exec(cb);
+      },
+      category_items: function (cb) {
+        ItemInstance.find()
+          .popoulate({
+            path: "item",
+            populate: {
+              path: "category",
+              match: { _id: req.params.id },
+            },
+          })
+          .exec(cb);
+      },
+    },
+    //check for errors
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      //no errors, but check if category has any items, if does, rerender form
+      if (results.category_items.length > 0) {
+        //Category has items, rerender
+        res.render("category_delete", {
+          title: "Category Delete Form",
+          category: results.category,
+          category_items: results.category_items,
+        });
+        return;
+      } else {
+        //category has no items, delete and redirect to category list page
+        Category.findByIdAndRemove(req.body.id, function deleteCategory(err) {
+          if (err) {
+            return next(err);
+          }
+          res.redirect("/catalog/categories");
+        });
+      }
+    }
+  );
 };
 
 //display category update form on GET
