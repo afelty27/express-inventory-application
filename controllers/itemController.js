@@ -192,11 +192,6 @@ exports.item_delete_get = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      // if (results.items == null) {
-      //   var err = new Error("Item Not Found");
-      //   err.status = 404;
-      //   return next(err);
-      // }
       res.render("item_delete", {
         title: "Item Delete Form",
         item_instances: results.item_list,
@@ -242,11 +237,6 @@ exports.item_delete_post = (req, res) => {
       }
     }
   );
-
-  //no errors, check if item has any instances
-  //if so, rerender
-  //if
-  res.send("NOT IMPLEMENTED: Item delete POST");
 };
 
 //display item update form on GET

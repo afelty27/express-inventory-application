@@ -12,6 +12,7 @@ const ItemInstanceSchema = new Schema({
   },
 });
 
+//virtual for url
 ItemInstanceSchema.virtual("url").get(function () {
   return `/catalog/iteminstance/${this._id}`;
 });
