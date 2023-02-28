@@ -147,22 +147,14 @@ exports.item_create_post = [
         },
         function (err, results) {
           if (err) {
-            console.log("ERROR OCCURED");
             return next(err);
           }
-          console.log("line 152");
-          console.log(results);
-          console.log("length: " + results.categories.length);
           //mark our selected categories as checked
           for (let i = 0; i < results.categories.length; i++) {
-            console.log("enter for");
             if (item.category.indexOf(results.categories[i]._id) > -1) {
-              console.log("enter if");
               results.categories[i].checked = "true";
             }
           }
-          console.log("Here, some error happened");
-          console.log(errors.array());
           res.render("item_form", {
             title: "Create Item",
             category_list: results.categories,

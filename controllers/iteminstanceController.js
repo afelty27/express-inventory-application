@@ -3,6 +3,8 @@ const Item = require("../models/item");
 const Category = require("../models/category");
 var async = require("async");
 
+const { body, validationResult } = require("express-validator");
+
 //Display list of all ItemInstances.
 exports.iteminstance_list = (req, res) => {
   ItemInstance.find({})
@@ -69,9 +71,51 @@ exports.iteminstance_create_get = (req, res, next) => {
 };
 
 //handle ItemInstance create on POST
-exports.iteminstance_create_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance create POST");
-};
+exports.iteminstance_create_post = [
+  //need to validate and sanitize data from the inputs
+  body("item", "Item name must not be empty")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  body("status", "Please choose a status").trim().isLength({ min: 1 }).escape(),
+
+  //process request for errors
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    //create a new item instance object with the info
+    var itemInstance = new ItemInstance({
+      item: req.body.item,
+      status: req.body.status,
+    });
+
+    //check for errors
+    if (!errors.isEmpty()) {
+      //There are errors, render form again
+      Item.find({}, "name").exec(function (err, items) {
+        if (err) {
+          return next(err);
+        }
+        //successful, so render
+        res.render("iteminstance_form", {
+          title: "ItemInstance Create",
+          item_list: items,
+        });
+      });
+    } else {
+      itemInstance.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+        //successful, so redirect to new itemInstance page
+        res.redirect(itemInstance.url);
+      });
+    }
+  },
+
+  //save and redirect
+];
 
 //display ItemInstance delete form on GET
 exports.iteminstance_delete_get = (req, res, next) => {
