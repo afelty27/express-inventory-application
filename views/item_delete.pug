@@ -7,12 +7,11 @@ block content
     p #[strong Name:] #{item.name} 
     p #[strong Description:] #{item.description} 
     p #[strong Price:] $#{item.price} 
-    p #[strong STock:] #{item.number_in_stock} 
+    p #[strong Stock:] #{item.number_in_stock} 
     p #[strong Category: ]
         each cat in item.category 
             a(href=cat.url) #{cat.name} 
 
-    p #{item_instances}
     if item_instances.length 
 
         p #[strong Delete the following items before deleting item type: ]
