@@ -209,6 +209,44 @@ exports.item_delete_get = (req, res, next) => {
 
 //handle item delete on POST
 exports.item_delete_post = (req, res) => {
+  //get item and all instances of item
+  async.parallel(
+    {
+      item: function (cb) {
+        Item.findById(req.params.id).exec(cb);
+      },
+      item_list: function (cb) {
+        ItemInstance.find({ item: req.params.id }).populate("item").exec(cb);
+      },
+    },
+    //check for errors
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      //if no errors, check if has instances
+      if (results.item_list.length > 0) {
+        res.render("item_delete", {
+          title: "Item Delete Form",
+          item_instances: results.item_list,
+          item: results.item,
+        });
+        return;
+      } else {
+        //item has no instances, delete and render item page
+        Item.findByIdAndRemove(req.body.id, function deleteItem(err) {
+          if (err) {
+            return next(err);
+          }
+          res.redirect("/catalog/items");
+        });
+      }
+    }
+  );
+
+  //no errors, check if item has any instances
+  //if so, rerender
+  //if
   res.send("NOT IMPLEMENTED: Item delete POST");
 };
 
