@@ -27,9 +27,7 @@ Additionally, when the database was populated, all item types and item instances
 5. Go to localhost:3000 in a web browser
 
 <h3>Api Reference:</h3>
-This application uses a cloud-based MongoDB database hosed by MongoDB Atlas. The data has been pre-loaded onto an Atlas cluster which the application can connect to using the following URL:
-mongodb+srv://Cluster1:Cluster1@cluster1.zgnogbk.mongodb.net/inventory_application?retryWrites=true&w=majority
-Note: This cluster contains no sensitive information related to the creator. This information was previously stored in an environment variable but is listed here for ease of reproducibility. Alternatively, rather than connecting to the cluster, a user can create their own cluster and populate the data by running the populatedb.js in the terminal.
+This application uses a cloud-based MongoDB database hosed by MongoDB Atlas.
 
 <h3>How The Application Works:</h3>
 Start by entering the home page. From here, you will see the total counts of all item types, instances, and categories. On the left navbar, you can choose the type of action you wish to perform.
