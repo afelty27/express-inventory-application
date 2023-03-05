@@ -17,7 +17,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 //databse string goes here
-const mongoDB = process.env.MONGO_STRING;
+const mongoDB = process.env.mongoDB;
 
 //wait for database to connect, log error if there is a problem
 main().catch((err) => console.log(err));
