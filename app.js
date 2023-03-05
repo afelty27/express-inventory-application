@@ -17,7 +17,8 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 //databse string goes here
-const mongoDB = process.env.mongoDB;
+const mongoDB =
+  "mongodb+srv://Cluster1:Cluster1@cluster1.zgnogbk.mongodb.net/inventory_application?retryWrites=true&w=majority";
 
 //wait for database to connect, log error if there is a problem
 main().catch((err) => console.log(err));
