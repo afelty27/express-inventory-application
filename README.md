@@ -1,5 +1,5 @@
 <h1>Express Inventory Application: </h1>
-<h4>Deployment link: <a>express-inventory-application-production-e35b.up.railway.app</a></h4>
+<h4>Deployment link: <a>https://express-inventory-application-production-e35b.up.railway.app/catalog</a></h4>
 Express Inventory Applicaiton is an educational project that was being built with the intention of learning and practicing creating a backend in node.js using Express. My goal for this application was to create sensible models using a no-SQL database in order to practice CRUD operations. The app simulates a store database system keeping track of the item types that the store holds, the individual instances of each item, and the categories/departments that each item belongs in.
 
 <h3>What I Learned/What I Would Do Differently:</h3>
