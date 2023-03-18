@@ -139,7 +139,15 @@ exports.iteminstance_delete_get = (req, res, next) => {
 
 //handle itemInstance delelet on POST
 exports.iteminstance_delete_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance delete POST");
+  //don't need to check to find anything, assume instance is valid
+
+  ItemInstance.findByIdAndRemove(req.body.id, function deleteItemInstance(err) {
+    if (err) {
+      return next(err);
+    }
+    //success, redirecet to list of all item instances
+    res.redirect("/catalog/iteminstances");
+  });
 };
 
 //display ItemInstance update form on GET
