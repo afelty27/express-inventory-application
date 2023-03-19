@@ -217,6 +217,42 @@ exports.category_update_get = (req, res) => {
 };
 
 //handle category update on post
-exports.category_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Category update POST");
-};
+exports.category_update_post = [
+  //validate and sanitize
+  body("name", "Category name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  //process request
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    //create a category object
+    var category = new Category({
+      name: req.body.name,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      //there are erros. Render again
+      res.render("category_form", {
+        title: "Create Category",
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      //data from form is valid. Update record
+      Category.findByIdAndUpdate(
+        req.params.id,
+        category,
+        {},
+        function (err, thecategory) {
+          //successful - redirect to detail page
+          res.redirect(thecategory.url);
+        }
+      );
+    }
+  },
+];
