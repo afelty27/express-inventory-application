@@ -151,7 +151,35 @@ exports.iteminstance_delete_post = (req, res) => {
 
 //display ItemInstance update form on GET
 exports.iteminstance_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance update GET");
+  //get item and categories
+  async.parallel(
+    {
+      iteminstance: function (cb) {
+        ItemInstance.findById(req.params.id).populate("item").exec(cb);
+      },
+      items: function (cb) {
+        Item.find(cb);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.iteminstance == null) {
+        //no results
+        var err = new Error("Copy of item not found");
+        err.status = 404;
+        return next(err);
+      }
+      //success
+      res.render("iteminstance_form", {
+        title: "Update ItemInstance",
+        item_list: results.items,
+        selected_item: results.iteminstance.item._id,
+        iteminstance: results.iteminstance,
+      });
+    }
+  );
 };
 
 //handle iteminstance update on POST
