@@ -4,6 +4,7 @@ const ItemInstance = require("../models/iteminstance");
 
 const async = require("async");
 const { body, validationResult } = require("express-validator");
+const item = require("../models/item");
 
 exports.index = (req, res) => {
   async.parallel(
@@ -241,10 +242,122 @@ exports.item_delete_post = (req, res) => {
 
 //display item update form on GET
 exports.item_update_get = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item update GET");
+  //get item by id and populate category
+  async.parallel(
+    {
+      item(cb) {
+        Item.findById(req.params.id).populate("category").exec(cb);
+      },
+      categories(cb) {
+        Category.find().exec(cb);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      //check to see if the item exists
+      if (results.item == null) {
+        const err = new Error("Item not found");
+        err.status = 404;
+        return next(err);
+      }
+      //success, mark selected categories then display form
+      for (const category of results.categories) {
+        for (const itemCategory of results.item.category) {
+          if (item._id.toString() === itemCategory._id.toString()) {
+            item.checked = "true";
+          }
+        }
+      }
+      res.render("item_form", {
+        title: "Update Item",
+        categories: results.categories,
+        item: results.item,
+      });
+    }
+  );
 };
 
 //handle item update on POST
-exports.item_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: Item update POST");
-};
+exports.item_update_post = [
+  //convert category to an array
+  (req, res, next) => {
+    if (!(req.body.category instanceof Array)) {
+      if (typeof req.body.category == "undefined") req.body.category = [];
+      else req.body.category = new Array(req.body.category);
+    }
+    next();
+  },
+
+  //validate and sanitize fields
+  body("name", "Name must not be empty").trim().isLength({ min: 1 }).escape(),
+  body("description", "Description must not be empty")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("category.*").escape(),
+  body("price", "Item must have a positive price")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("stock", "Stock must have a positive value").escape(),
+
+  //process request after validation
+  (req, res, next) => {
+    //extract validation errors
+    const errors = validationResult(req);
+
+    //create Item object with data and old id
+    var item = new Item({
+      name: req.body.name,
+      description: req.body.description,
+      category:
+        typeof req.body.category === "undefined" ? [] : req.item.category,
+      price: req.body.price,
+      number_in_stock: req.body.stock,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      //there are errors, rerender form
+
+      //Get all categories for form
+      async.parallel(
+        {
+          categories: function (cb) {
+            Category.find(cb);
+          },
+        },
+        function (err, results) {
+          if (err) {
+            return next(err);
+          }
+
+          //mark selected categories as checked
+          for (let i = 0; i < results.categories.length; i++) {
+            if (item.category.indesOf(results.categories[i]._id) > -1) {
+              results.categories[i].checked = "true";
+            }
+          }
+          res.render("item_form", {
+            title: "Create Item",
+            category_list: results.categories,
+            item: item,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    } else {
+      //form is valid, save and redirect
+      Item.findByIdAndUpdate(req.params.id, item, {}, function (err, theitem) {
+        if (err) {
+          return next(err);
+        }
+        //successful - redirect to detail page
+        res.redirect(theitem.url);
+      });
+    }
+  },
+];

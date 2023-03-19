@@ -104,6 +104,7 @@ exports.iteminstance_create_post = [
         });
       });
     } else {
+      //save and redirect
       itemInstance.save(function (err) {
         if (err) {
           return next(err);
@@ -113,8 +114,6 @@ exports.iteminstance_create_post = [
       });
     }
   },
-
-  //save and redirect
 ];
 
 //display ItemInstance delete form on GET
@@ -137,7 +136,7 @@ exports.iteminstance_delete_get = (req, res, next) => {
     });
 };
 
-//handle itemInstance delelet on POST
+//handle itemInstance delete on POST
 exports.iteminstance_delete_post = (req, res) => {
   //don't need to check to find anything, assume instance is valid
 
