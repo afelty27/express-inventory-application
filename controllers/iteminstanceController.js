@@ -183,6 +183,56 @@ exports.iteminstance_update_get = (req, res) => {
 };
 
 //handle iteminstance update on POST
-exports.iteminstance_update_post = (req, res) => {
-  res.send("NOT IMPLEMENTED: ItemInstance update POST");
-};
+exports.iteminstance_update_post = [
+  //validate and sanitize
+  body("item", "Item name must not be empty")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  body("status", "Please choose a status").trim().isLength({ min: 1 }).escape(),
+
+  //process request
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    //create an ItemInstance object
+    var iteminstance = new ItemInstance({
+      item: req.body.item,
+      status: req.body.status,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      //there are errors, rerender
+      Item.find({}, "title").exec(function (err, items) {
+        if (err) {
+          return next(err);
+        }
+        //successful, render
+        res.render("iteminstance_form", {
+          title: "Update ItemInstance",
+          item_list: items,
+          selected_item: iteminstance.item._id,
+          errors: errors.array(),
+          iteminstance: iteminstance,
+        });
+      });
+      return;
+    } else {
+      //data is valid
+      ItemInstance.findByIdAndUpdate(
+        req.params.id,
+        iteminstance,
+        {},
+        function (err, theiteminstance) {
+          if (err) {
+            return next(err);
+          }
+          //success so redirect to detial page
+          res.redirect(theiteminstance.url);
+        }
+      );
+    }
+  },
+];
